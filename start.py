@@ -5,10 +5,10 @@ COLOR_DEFAULT = '\033[0m'
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # read config
-print("importing config.ini ", end='')
+print("importing config/config.ini ", end='')
 import configparser
 config = configparser.ConfigParser()
-config.read("config.ini")
+config.read("config/config.ini")
 OPEN_API_KEY = config.get("OpenAPI", "OPEN_API_KEY")
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 

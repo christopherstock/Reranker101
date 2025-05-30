@@ -2,7 +2,9 @@
 
 ## Tech Stack
 - Python 3.13.3
--
+- LlamaIndex 0.12.37
+- ColBERT Reranker v2, 0.2.20
+- OpenAPI
 
 ## 1. Installation
 ```
