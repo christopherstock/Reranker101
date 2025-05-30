@@ -1,24 +1,23 @@
 # acclaim
 print("invoke start.py ", end='')
-print("OK")
+COLOR_OK = '\033[92m' # light green
+COLOR_DEFAULT = '\033[0m'
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # disable warnings
 print("disable warnings ", end='')
 import warnings
 warnings.filterwarnings("ignore", message=r"^urllib3 v2 only supports OpenSSL")
-print("OK")
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # import libs
 print("import LlamaIndex lib ", end='')
 import os
 import sys
 from llama_index.core import ( VectorStoreIndex, SimpleDirectoryReader)
-print("OK")
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # assign OpenAPI key
 print("set OpenAPI key ", end='')
 os.environ["OPENAI_API_KEY"] = "sk-"
-print("OK")
-
-# print("OK Sys Lib Path:")
-# print(sys.path)
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
