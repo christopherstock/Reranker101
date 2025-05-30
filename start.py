@@ -21,3 +21,14 @@ print(COLOR_OK + "OK" + COLOR_DEFAULT)
 print("set OpenAPI key ", end='')
 os.environ["OPENAI_API_KEY"] = "sk-"
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
+
+# load documents
+docRoot ="./data/paul_graham/"
+print("load documents [" + docRoot + "] ", end='')
+documents = SimpleDirectoryReader(docRoot).load_data()
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
+
+# build search index
+print("build search index ", end='')
+index = VectorStoreIndex.from_documents(documents=documents)
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
