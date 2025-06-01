@@ -1,6 +1,4 @@
 # acclaim
-from llama_index.core.evaluation.batch_runner import response_worker
-
 print("invoke start.py ", end='')
 COLOR_OK = '\033[92m' # light green
 COLOR_DEFAULT = '\033[0m'
@@ -54,13 +52,45 @@ index = VectorStoreIndex.from_documents(documents=documents)
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # ---------- without reranker
+query_engine = index.as_query_engine(
+    similarity_top_k=10,
+)
+response = query_engine.query(
+    "What did Sam Altman do in this essay?",
+)
+"""
+# original response
+for node in response.source_nodes:
+    print(node.id_)
+    print(node.node.get_content()[:120])
+    print("reranking score: ", node.score)
+    print("**********")
+"""
+# best response
+print(">> Best Response (no Reranker):")
+print(response)
+
+# next query
+response = query_engine.query(
+    "Which schools did Paul attend?",
+)
+
+"""
+# all responses
+for node in response.source_nodes:
+    print(node.id_)
+    print(node.node.get_content()[:120])
+    print("reranking score: ", node.score)
+    print("**********")
+"""
+
+# best response
+print(">> Best Response (no Reranker):")
+print(response)
+
+
+# ------------ magic with reranker
 from llama_index.postprocessor.colbert_rerank import ColbertRerank
-
-
-
-
-
-# magic with reranker
 colbert_reranker = ColbertRerank(
     top_n=5,
     model="colbert-ir/colbertv2.0",
@@ -75,6 +105,7 @@ response_rr = query_engine_rr.query(
     "What did Sam Altman do in this essay?",
 )
 
+"""
 # original response
 for node_rr in response_rr.source_nodes:
     print(node_rr.id_)
@@ -82,8 +113,10 @@ for node_rr in response_rr.source_nodes:
     print("reranking score: ", node_rr.score)
     print("retrieval score: ", node_rr.node.metadata["retrieval_score"])
     print("**********")
+"""
 
 # best response
+print(">> Best Response (with Reranker):")
 print(response_rr)
 
 # next query
@@ -91,6 +124,7 @@ response_rr = query_engine_rr.query(
     "Which schools did Paul attend?",
 )
 
+"""
 # all responses
 for node_rr in response_rr.source_nodes:
     print(node_rr.id_)
@@ -98,6 +132,8 @@ for node_rr in response_rr.source_nodes:
     print("reranking score: ", node_rr.score)
     print("retrieval score: ", node_rr.node.metadata["retrieval_score"])
     print("**********")
+"""
 
 # best response
+print(">> Best Response (with Reranker):")
 print(response_rr)
