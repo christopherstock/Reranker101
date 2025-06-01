@@ -9,7 +9,7 @@ print("importing config/config.ini ", end='')
 import configparser
 config = configparser.ConfigParser()
 config.read("config/config.ini")
-OPEN_AI_KEY = config.get("OpenAI", "OPEN_API_KEY")
+OPEN_AI_KEY = config.get("OpenAI", "OPEN_AI_KEY")
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # check OpenAI key validity
@@ -43,7 +43,7 @@ os.environ["OPENAI_API_KEY"] = OPEN_AI_KEY
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # load documents
-docRoot ="./data/paul_graham/"
+docRoot ="./data/"
 print("load documents [" + docRoot + "] ", end='')
 documents = SimpleDirectoryReader(docRoot).load_data()
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
