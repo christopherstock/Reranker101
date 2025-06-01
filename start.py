@@ -9,8 +9,20 @@ print("importing config/config.ini ", end='')
 import configparser
 config = configparser.ConfigParser()
 config.read("config/config.ini")
-OPEN_API_KEY = config.get("OpenAPI", "OPEN_API_KEY")
+OPEN_AI_KEY = config.get("OpenAI", "OPEN_API_KEY")
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
+
+# check OpenAI key validity
+import openai
+client = openai.OpenAI(api_key=OPEN_AI_KEY)
+try:
+    models = client.models.list()
+    print("OpenAI Key is valid ", end='')
+    print(models)
+    print(COLOR_OK + "OK" + COLOR_DEFAULT)
+except Exception as e:
+    print("OpenAI Key is NOT valid")
+    print(e)
 
 # disable warnings
 print("disable warnings ", end='')
@@ -25,9 +37,9 @@ import sys
 from llama_index.core import ( VectorStoreIndex, SimpleDirectoryReader)
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
-# assign OpenAPI key
-print("set OpenAPI key ", end='')
-os.environ["OPENAI_API_KEY"] = OPEN_API_KEY
+# assign OpenAI key
+print("set OpenAI key ", end='')
+os.environ["OPENAI_API_KEY"] = OPEN_AI_KEY
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # load documents
