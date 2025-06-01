@@ -18,7 +18,6 @@ client = openai.OpenAI(api_key=OPEN_AI_KEY)
 try:
     models = client.models.list()
     print("OpenAI Key is valid ", end='')
-    print(models)
     print(COLOR_OK + "OK" + COLOR_DEFAULT)
 except Exception as e:
     print("OpenAI Key is NOT valid")
@@ -53,7 +52,10 @@ print("build search index ", end='')
 index = VectorStoreIndex.from_documents(documents=documents)
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
-# magic!
+
+
+
+# magic with reranker
 from llama_index.postprocessor.colbert_rerank import ColbertRerank
 colbert_reranker = ColbertRerank(
     top_n=5,
