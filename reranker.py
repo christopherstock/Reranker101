@@ -48,7 +48,7 @@ print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # build search index
 print("build search index ", end='')
-index = VectorStoreIndex.from_documents(documents=documents)
+search_index = VectorStoreIndex.from_documents(documents=documents)
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # specify question
@@ -57,7 +57,7 @@ QUESTION = "What did Sam Altman do in this essay?"
 # -------------------------------------------------------------
 
 # query without reranker
-query_engine = index.as_query_engine(
+query_engine = search_index.as_query_engine(
     similarity_top_k=10,
 )
 response = query_engine.query(QUESTION)
@@ -88,7 +88,7 @@ colbert_reranker = ColbertRerank(
     tokenizer="colbert-ir/colbertv2.0",
     keep_retrieval_score=True,
 )
-query_engine_rr = index.as_query_engine(
+query_engine_rr = search_index.as_query_engine(
     similarity_top_k=10,
     node_postprocessors=[colbert_reranker],
 )
