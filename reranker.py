@@ -64,15 +64,17 @@ response = query_engine.query(QUESTION)
 
 """
 # original responses
+print()
 print(">> Original Responses (no Reranker):")
 for node in response.source_nodes:
     print(node.id_)
     print(node.node.get_content()[:120])
-    print("reranking score: ", node.score)
+    print("ranking score: ", node.score)
     print("**********")
 """
 
 # best response
+print()
 print(">> Best Response (no Reranker):")
 print(response)
 
@@ -94,6 +96,7 @@ response_rr = query_engine_rr.query(QUESTION)
 
 """
 # original responses
+print()
 print(">> Original Responses (with Reranker):")
 for node_rr in response_rr.source_nodes:
     print(node_rr.id_)
@@ -104,5 +107,6 @@ for node_rr in response_rr.source_nodes:
 """
 
 # best response
+print()
 print(">> Best Response (with Reranker):")
 print(response_rr)
