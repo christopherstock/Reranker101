@@ -41,18 +41,12 @@ from langchain_community.document_loaders import TextLoader
 from langchain_community.document_loaders import DirectoryLoader
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
-# load documents
-docRoot ="./data/"
-print("load documents [" + docRoot + "] ", end='')
-documents = DirectoryLoader(docRoot, glob="**/*.txt", loader_cls=TextLoader).load()
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
-print("[" + str(len(documents)) + "] docs loaded")
-
 # try LangChain OpenAI prompt
 from langchain_openai import OpenAI
 llm = OpenAI()
 print("Answer: " + llm.invoke("Hello how are you?"))
 
+"""
 # read text file
 print("text File read ", end='')
 with open("./data/paul_graham_essay.txt") as f:
@@ -64,12 +58,46 @@ print("split text file ", end='')
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=20)
-chunks = text_splitter.split_text(text_file)
+chunks = text_splitter.split_documents(text_file)
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 print("split to [" + str(len(chunks)) + "] chunks ", end='')
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
+"""
 
+# load documents
+docRoot ="./data/"
+print("load documents [" + docRoot + "] ", end='')
+documents = DirectoryLoader(docRoot, glob="**/*.txt", loader_cls=TextLoader).load()
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
+print("[" + str(len(documents)) + "] docs loaded")
 
+# split documents using recursive character text splitter
+print("split documents ", end='')
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size = 1500,
+    chunk_overlap = 150
+)
+splits = text_splitter.split_documents(documents)
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
+
+exit(0)
+
+# embeddings ?
+from langchain.vectorstores import Chroma
+from langchain.embeddings.openai import OpenAIEmbeddings
+embedding = OpenAIEmbeddings()
+
+persist_directory = './.embeddings'
+
+# Create the vector store
+vectordb = Chroma.from_documents(
+    documents=chunks,
+    embedding=embedding,
+    persist_directory=persist_directory
+)
+
+print(vectordb._collection.count())
 
 exit(0)
 
