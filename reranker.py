@@ -59,7 +59,21 @@ with open("./data/paul_graham_essay.txt") as f:
     text_file = f.read()
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
+# split text into chunks
+print("split text file ", end='')
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=20)
+chunks = text_splitter.split_text(text_file)
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
+print("split to [" + str(len(chunks)) + "] chunks ", end='')
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
+
+
+
 exit(0)
+
+
 
 # build search index
 print("build search index ", end='')
