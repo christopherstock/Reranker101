@@ -8,7 +8,7 @@ print(COLOR_OK + "OK" + COLOR_DEFAULT)
 print("disable warnings ", end='')
 import warnings
 warnings.filterwarnings("ignore", message=r"urllib3 v2 only supports")
-warnings.filterwarnings("ignore", message=r"torch.cuda.amp.GradScaler")
+warnings.filterwarnings("ignore", message=r"FutureWarning")
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # read config
@@ -115,6 +115,7 @@ print(COLOR_OK + "OK" + COLOR_DEFAULT)
 print()
 print(">> Best Response (no Reranker):")
 print(docs[0].page_content)
+print()
 
 # -------------------------------------------------------------
 
