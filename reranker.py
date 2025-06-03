@@ -69,7 +69,8 @@ docRoot ="./data/"
 print("load documents [" + docRoot + "] ", end='')
 documents = DirectoryLoader(docRoot, glob="**/*.txt", loader_cls=TextLoader).load()
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
-print("[" + str(len(documents)) + "] docs loaded")
+print("loaded [" + str(len(documents)) + "] docs ", end='')
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # split documents using recursive character text splitter
 print("split documents ", end='')
@@ -104,8 +105,9 @@ print("launch query ", end='')
 QUESTION = "What did Sam Altman do in this essay?"
 docs = vectordb.similarity_search(QUESTION, k=10)
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
-# Check the length of the document
-print("found [" + str(len(docs)) + "] results")
+# Check the number of results
+print("found [" + str(len(docs)) + "] results ", end='')
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # Check the content of the first document
 print(docs[0].page_content)
