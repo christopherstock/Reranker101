@@ -99,6 +99,8 @@ vectordb = Chroma.from_documents(
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 print("created [" + str(vectordb._collection.count()) + "] vectorDB entries")
 
+# -------------------------------------------------------------
+
 # launch query (no reranker)
 print("launch query ", end='')
 QUESTION = "What did Sam Altman do in this essay?"
@@ -113,13 +115,18 @@ print()
 print(">> Best Response (no Reranker):")
 print(docs[0].page_content)
 
+# -------------------------------------------------------------
+
+# use ColBERT Reranker via 'RAGatouille'
+print("import Lib 'RAGatouille' ", end='')
+from ragatouille import RAGPretrainedModel
+RAG = RAGPretrainedModel.from_pretrained("colbert-ir/colbertv2.0")
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
+
+
+
 exit(0)
 
-
-
-
-
-# -------------------------------------------------------------
 
 # query with reranker
 from llama_index.postprocessor.colbert_rerank import ColbertRerank
