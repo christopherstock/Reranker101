@@ -113,50 +113,37 @@ print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # best response
 print()
-print(">> Best Response (no Reranker):")
+print(">> Best Response (no Reranker, VectorDB & embeddings, similarity):")
 print(docs[0].page_content)
 print()
 
 # -------------------------------------------------------------
 
-# use LangChain Lib 'RAGatouille'
+# use LangChain Lib 'RAGatouille' + ColBERT 2.0 Reraner
 print("import Lib 'RAGatouille' ", end='')
 from ragatouille import RAGPretrainedModel
 RAG = RAGPretrainedModel.from_pretrained("colbert-ir/colbertv2.0")
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
-
-
-exit(0)
-
-
-# query with reranker
-from llama_index.postprocessor.colbert_rerank import ColbertRerank
-colbert_reranker = ColbertRerank(
-    top_n=5,
-    model="colbert-ir/colbertv2.0",
-    tokenizer="colbert-ir/colbertv2.0",
-    keep_retrieval_score=True,
+# create RAG index from document
+print("create 'RAGatouille' RAG index ", end='')
+with open("./data/paul_graham_essay.txt","r") as file:
+    content = file.read()
+RAG.index(
+    collection=[content],
+    index_name="rag-without-reranker",
+    max_document_length=180,
+    split_documents=True,
 )
-query_engine_rr = search_index.as_query_engine(
-    similarity_top_k=10,
-    node_postprocessors=[colbert_reranker],
-)
-response_rr = query_engine_rr.query(QUESTION)
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
-"""
-# original responses
-print()
-print(">> Original Responses (with Reranker):")
-for node_rr in response_rr.source_nodes:
-    print(node_rr.id_)
-    print(node_rr.node.get_content()[:120])
-    print("reranking score: ", node_rr.score)
-    print("retrieval score: ", node_rr.node.metadata["retrieval_score"])
-    print("**********")
-"""
+# launch question as query -- with reranker
+print("query question using RAG Index + ColBERT reranker ", end='')
+results = RAG.search(query=QUESTION, k=10)
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # best response
 print()
-print(">> Best Response (with Reranker):")
-print(response_rr)
+print(">> Best Response (Ratatouille RAG + ColBERT Reranker):")
+print(results[0]['content'])
+print()
