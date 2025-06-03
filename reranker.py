@@ -8,6 +8,7 @@ print(COLOR_OK + "OK" + COLOR_DEFAULT)
 print("disable warnings ", end='')
 import warnings
 warnings.filterwarnings("ignore", message=r"urllib3 v2 only supports")
+warnings.filterwarnings("ignore", message=r"torch.cuda.amp.GradScaler")
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # read config
@@ -117,7 +118,7 @@ print(docs[0].page_content)
 
 # -------------------------------------------------------------
 
-# use ColBERT Reranker via 'RAGatouille'
+# use LangChain Lib 'RAGatouille'
 print("import Lib 'RAGatouille' ", end='')
 from ragatouille import RAGPretrainedModel
 RAG = RAGPretrainedModel.from_pretrained("colbert-ir/colbertv2.0")
