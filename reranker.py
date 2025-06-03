@@ -53,15 +53,11 @@ from langchain_openai import OpenAI
 llm = OpenAI()
 print("Answer: " + llm.invoke("Hello how are you?"))
 
-exit(0)
-
-with documents as document:
-
-    from langchain.text_splitter import RecursiveCharacterTextSplitter
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
-        chunk_overlap=20)
-    chunks = text_splitter.split_text(document)
+# read text file
+print("text File read ", end='')
+with open("./data/paul_graham_essay.txt") as f:
+    text_file = f.read()
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 exit(0)
 
