@@ -44,12 +44,24 @@ print(COLOR_OK + "OK" + COLOR_DEFAULT)
 # load documents
 docRoot ="./data/"
 print("load documents [" + docRoot + "] ", end='')
-
-loader = DirectoryLoader(docRoot, glob="**/*.md")
-docs = loader.load()
-len(docs)
-
+documents = DirectoryLoader(docRoot, glob="**/*.txt", loader_cls=TextLoader).load()
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
+print("[" + str(len(documents)) + "] docs loaded")
+
+# try LangChain OpenAI prompt
+from langchain_openai import OpenAI
+llm = OpenAI()
+print("Answer: " + llm.invoke("Hello how are you?"))
+
+exit(0)
+
+with documents as document:
+
+    from langchain.text_splitter import RecursiveCharacterTextSplitter
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=500,
+        chunk_overlap=20)
+    chunks = text_splitter.split_text(document)
 
 exit(0)
 
