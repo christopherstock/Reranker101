@@ -81,14 +81,16 @@ text_splitter = RecursiveCharacterTextSplitter(
 splits = text_splitter.split_documents(documents)
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
+# create embeddings
+print("create embeddings ", end='')
+from langchain_community.vectorstores import Chroma
+from langchain_openai.embeddings import OpenAIEmbeddings
+embedding = OpenAIEmbeddings()
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
+
 exit(0)
 
-# embeddings ?
-from langchain.vectorstores import Chroma
-from langchain.embeddings.openai import OpenAIEmbeddings
-embedding = OpenAIEmbeddings()
 
-persist_directory = './.embeddings'
 
 # Create the vector store
 vectordb = Chroma.from_documents(
