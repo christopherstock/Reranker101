@@ -131,7 +131,7 @@ with open("./data/paul_graham_essay.txt","r") as file:
     content = file.read()
 RAG.index(
     collection=[content],
-    index_name="rag-without-reranker",
+    index_name="rag-with-reranker",
     max_document_length=180,
     split_documents=True,
 )
