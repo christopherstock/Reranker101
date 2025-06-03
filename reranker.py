@@ -37,8 +37,7 @@ except Exception as e:
 
 # import libs
 print("import LangChain lib ", end='')
-from langchain_community.document_loaders import TextLoader
-from langchain_community.document_loaders import DirectoryLoader
+from langchain_community.document_loaders import TextLoader, DirectoryLoader
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # try LangChain OpenAI prompt
@@ -100,7 +99,7 @@ vectordb = Chroma.from_documents(
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 print("created [" + str(vectordb._collection.count()) + "] vectorDB entries")
 
-# launch query
+# launch query (no reranker)
 print("launch query ", end='')
 QUESTION = "What did Sam Altman do in this essay?"
 docs = vectordb.similarity_search(QUESTION, k=10)
@@ -109,42 +108,16 @@ print(COLOR_OK + "OK" + COLOR_DEFAULT)
 print("found [" + str(len(docs)) + "] results ", end='')
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
-# Check the content of the first document
+# best response
+print()
+print(">> Best Response (no Reranker):")
 print(docs[0].page_content)
 
 exit(0)
 
-# build search index
-print("build search index ", end='')
-search_index = VectorStoreIndex.from_documents(documents=documents)
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
-# specify question
-QUESTION = "What did Sam Altman do in this essay?"
 
-# -------------------------------------------------------------
 
-# query without reranker
-query_engine = search_index.as_query_engine(
-    similarity_top_k=10,
-)
-response = query_engine.query(QUESTION)
-
-"""
-# original responses
-print()
-print(">> Original Responses (no Reranker):")
-for node in response.source_nodes:
-    print(node.id_)
-    print(node.node.get_content()[:120])
-    print("ranking score: ", node.score)
-    print("**********")
-"""
-
-# best response
-print()
-print(">> Best Response (no Reranker):")
-print(response)
 
 # -------------------------------------------------------------
 
