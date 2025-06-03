@@ -18,6 +18,12 @@ config.read("config/config.ini")
 OPEN_AI_KEY = config.get("OpenAI", "OPEN_AI_KEY")
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
+# assign OpenAI key
+import os
+print("set OpenAI key ", end='')
+os.environ["OPENAI_API_KEY"] = OPEN_AI_KEY
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
+
 # check OpenAI key validity
 import openai
 client = openai.OpenAI(api_key=OPEN_AI_KEY)
@@ -30,15 +36,11 @@ except Exception as e:
     print(e)
 
 # import libs
-print("import LlamaIndex lib ", end='')
-import os
-from llama_index.core import ( VectorStoreIndex, SimpleDirectoryReader)
+print("import LangChain lib ", end='')
+from langchain_openai import ChatOpenAI
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
-# assign OpenAI key
-print("set OpenAI key ", end='')
-os.environ["OPENAI_API_KEY"] = OPEN_AI_KEY
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
+exit(0)
 
 # load documents
 docRoot ="./data/"
