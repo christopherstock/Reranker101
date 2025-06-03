@@ -88,18 +88,16 @@ from langchain_openai.embeddings import OpenAIEmbeddings
 embedding = OpenAIEmbeddings()
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
-exit(0)
-
-
-
-# Create the vector store
+# create vector store
+persist_directory = '.vstore/chroma/'
+print("create vector store ", end='')
 vectordb = Chroma.from_documents(
-    documents=chunks,
+    documents=splits,
     embedding=embedding,
     persist_directory=persist_directory
 )
-
-print(vectordb._collection.count())
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
+print("created [" + str(vectordb._collection.count()) + "] vectorDB entries")
 
 exit(0)
 
