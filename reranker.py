@@ -37,16 +37,21 @@ except Exception as e:
 
 # import libs
 print("import LangChain lib ", end='')
-from langchain_openai import ChatOpenAI
+from langchain_community.document_loaders import TextLoader
+from langchain_community.document_loaders import DirectoryLoader
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
-
-exit(0)
 
 # load documents
 docRoot ="./data/"
 print("load documents [" + docRoot + "] ", end='')
-documents = SimpleDirectoryReader(docRoot).load_data()
+
+loader = DirectoryLoader(docRoot, glob="**/*.md")
+docs = loader.load()
+len(docs)
+
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
+
+exit(0)
 
 # build search index
 print("build search index ", end='')
