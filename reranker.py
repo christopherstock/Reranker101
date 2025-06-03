@@ -99,9 +99,18 @@ vectordb = Chroma.from_documents(
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 print("created [" + str(vectordb._collection.count()) + "] vectorDB entries")
 
+# launch query
+print("launch query ", end='')
+QUESTION = "What did Sam Altman do in this essay?"
+docs = vectordb.similarity_search(QUESTION, k=10)
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
+# Check the length of the document
+print("found [" + str(len(docs)) + "] results")
+
+# Check the content of the first document
+print(docs[0].page_content)
+
 exit(0)
-
-
 
 # build search index
 print("build search index ", end='')
