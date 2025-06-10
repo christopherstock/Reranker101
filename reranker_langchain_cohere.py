@@ -88,7 +88,7 @@ print("created [" + str(vectordb._collection.count()) + "] vectorDB entries")
 
 print("launch query ", end='')
 QUESTION_1 = "Which emotions does the heart chakra relate to?"
-QUESTION_2 = "What did Sam Altman do?"
+QUESTION_2 = "What did Sam Altman do in this essay?"
 QUESTION = QUESTION_2
 docs = vectordb.similarity_search(QUESTION, k=10)
 print(COLOR_OK + "OK" + COLOR_DEFAULT)

@@ -1,4 +1,6 @@
 # acclaim
+from pydantic import SecretStr
+
 print("invoke start.py ", end='')
 COLOR_OK = '\033[92m' # light green
 COLOR_DEFAULT = '\033[0m'
@@ -36,114 +38,81 @@ except Exception as e:
     print("OpenAI Key is NOT valid")
     print(e)
 
-# import libs
-print("import LangChain lib ", end='')
 from langchain_community.document_loaders import TextLoader, DirectoryLoader
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
-
-# try LangChain OpenAI prompt
-from langchain_openai import OpenAI
-llm = OpenAI()
-print("Answer: " + llm.invoke("Hello how are you?"))
-
-"""
-# read text file
-print("text File read ", end='')
-with open("./data/paul_graham_essay.txt") as f:
-    text_file = f.read()
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
-
-# split text into chunks
-print("split text file ", end='')
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=20)
-chunks = text_splitter.split_documents(text_file)
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
-print("split to [" + str(len(chunks)) + "] chunks ", end='')
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
-"""
 
 # load documents
-docRoot ="./data/"
-print("load documents [" + docRoot + "] ", end='')
-documents = DirectoryLoader(docRoot, glob="**/*.txt", loader_cls=TextLoader).load()
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
-print("loaded [" + str(len(documents)) + "] docs ", end='')
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
+documents = DirectoryLoader("./data/", glob="**/*.txt", loader_cls=TextLoader).load()
+print("load [" + str(len(documents)) + "] documents OK")
 
 # split documents using recursive character text splitter
-print("split documents ", end='')
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-text_splitter = RecursiveCharacterTextSplitter(
-    chunk_size = 1500,
-    chunk_overlap = 150
-)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size = 1500, chunk_overlap = 150)
 splits = text_splitter.split_documents(documents)
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
+print("split documents OK")
 
 # create embeddings
-print("create embeddings ", end='')
 from langchain_community.vectorstores import Chroma
 from langchain_openai.embeddings import OpenAIEmbeddings
 embedding = OpenAIEmbeddings()
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
+print("create embeddings OK")
 
 # create vector store
-persist_directory = '.vstore/chroma/'
-print("create vector store ", end='')
 vectordb = Chroma.from_documents(
     documents=splits,
     embedding=embedding,
-    persist_directory=persist_directory
+    persist_directory='.vstore/chroma/'
 )
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
-print("created [" + str(vectordb._collection.count()) + "] vectorDB entries")
+print("create [" + str(vectordb._collection.count()) + "] vector store DB entries OK")
 
-# -------------------------------------------------------------
+# launch query
+docs = vectordb.similarity_search("What did Sam Altman do in this essay?", k=10)
 
-# launch query (no reranker)
-print("launch query ", end='')
-QUESTION = "What did Sam Altman do in this essay?"
-docs = vectordb.similarity_search(QUESTION, k=10)
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
-# Check the number of results
-print("found [" + str(len(docs)) + "] results ", end='')
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
-
-# best response
-print()
-print(">> Best Response (no Reranker, VectorDB & embeddings, similarity):")
+print("best response (no reranker):")
 print(docs[0].page_content)
-print()
 
-# -------------------------------------------------------------
+from langchain.retrievers import ContextualCompressionRetriever
+from langchain_cohere import CohereEmbeddings, ChatCohere, CohereRerank, CohereRagRetriever
+from langchain_community.vectorstores import Chroma
+from langchain.text_splitter import CharacterTextSplitter
 
-# use LangChain Lib 'RAGatouille' + ColBERT 2.0 Reranker
-print("import Lib 'RAGatouille' ", end='')
-from ragatouille import RAGPretrainedModel
-RAG = RAGPretrainedModel.from_pretrained("colbert-ir/colbertv2.0")
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
+# create Cohere LLM
+llm = ChatCohere(cohere_api_key=SecretStr("your-Cohere-API-key"), model="command-a-03-2025")
+print("create Cohere LLM OK")
 
-# create RAG index from document
-print("create 'RAGatouille' RAG index ", end='')
-with open("./data/paul_graham_essay.txt","r") as file:
-    content = file.read()
-RAG.index(
-    collection=[content],
-    index_name="rag-with-reranker",
-    max_document_length=180,
-    split_documents=True,
+# create embedding model
+embeddings = CohereEmbeddings(
+    cohere_api_key=SecretStr("your-Cohere-API-key"),
+    model="embed-english-light-v3.0"
 )
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
+print("create embedding model OK")
 
-# launch question as query -- with reranker
-print("query question using RAG Index + ColBERT reranker ", end='')
-results = RAG.search(query=QUESTION, k=10)
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
+# load documents
+documents = DirectoryLoader("./data/", glob="**/*.txt", loader_cls=TextLoader).load()
+print("load [" + str(len(documents)) + "] documents OK")
 
-# best response
-print()
-print(">> Best Response (Ratatouille RAG + ColBERT Reranker):")
-print(results[0]['content'])
-print()
+# split documents
+text_splitter = CharacterTextSplitter(chunk_size = 750, chunk_overlap = 150, separator="\n")
+splits = text_splitter.split_documents(documents)
+print("split text files OK")
+
+# create vector store from documents
+db = Chroma.from_documents(splits, embeddings)
+print("create vecor store DB OK")
+
+# create Cohere Reranker
+reranker = CohereRerank(
+    cohere_api_key=SecretStr("your-Cohere-API-key"), model="rerank-english-v3.0"
+)
+compression_retriever = ContextualCompressionRetriever(base_compressor=reranker, base_retriever=db.as_retriever())
+compressed_docs = compression_retriever.get_relevant_documents("What ")
+print("create Cohere Reranker OK' ", end='')
+
+# create Cohere RAG
+rag = CohereRagRetriever(llm=llm, connectors=[])
+docs = rag.get_relevant_documents("What did Sam Altman do in this essay?", documents=compressed_docs)
+print("create Cohere RAG instance OK")
+
+# Print the final generation
+answer = docs[-1].page_content
+print("best response (with Cohere reranker):")
+print(answer)
