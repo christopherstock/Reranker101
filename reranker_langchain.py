@@ -38,7 +38,7 @@ except Exception as e:
 
 # import libs
 print("import LangChain lib ", end='')
-from langchain_community.document_loaders import TextLoader, DirectoryLoader
+from langchain_community.document_loaders import TextLoader, DirectoryLoader, UnstructuredHTMLLoader
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # try LangChain OpenAI prompt
