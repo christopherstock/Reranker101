@@ -126,11 +126,11 @@ from langchain_community.document_loaders import WebBaseLoader
 user_query = "what is Cohere Toolkit?"
 # Define the Cohere LLM
 llm = ChatCohere(
-    cohere_api_key=COHERE_API_KEY, model="command-a-03-2025"
+    cohere_api_key=SecretStr(COHERE_API_KEY), model="command-a-03-2025"
 )
 # Define the Cohere embedding model
 embeddings = CohereEmbeddings(
-    cohere_api_key=COHERE_API_KEY, model="embed-english-light-v3.0"
+    cohere_api_key=SecretStr(COHERE_API_KEY), model="embed-english-light-v3.0"
 )
 # Load text files and split into chunks, you can also use data gathered elsewhere in your application
 raw_documents = WebBaseLoader(
@@ -144,7 +144,7 @@ documents = text_splitter.split_documents(raw_documents)
 db = Chroma.from_documents(documents, embeddings)
 # Create Cohere's reranker with the vector DB using Cohere's embeddings as the base retriever
 reranker = CohereRerank(
-    cohere_api_key=COHERE_API_KEY, model="rerank-english-v3.0"
+    cohere_api_key=SecretStr(COHERE_API_KEY), model="rerank-english-v3.0"
 )
 compression_retriever = ContextualCompressionRetriever(
     base_compressor=reranker, base_retriever=db.as_retriever()
@@ -168,9 +168,13 @@ for doc in docs[:-1]:
     print("\n\n" + "-" * 30 + "\n\n")
 # Print the final generation
 answer = docs[-1].page_content
-print("Answer:")
+print("")
+print(">>> Best Answer:")
 print(answer)
+
 # Print the final citations
+"""
 citations = docs[-1].metadata["citations"]
 print("Citations:")
 print(citations)
+"""
