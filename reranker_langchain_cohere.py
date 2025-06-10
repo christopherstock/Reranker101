@@ -105,55 +105,46 @@ print()
 # -------------------------------------------------------------
 # use LangChain with Reranker 'Cohere'
 
-
-
-"""
-from langchain_community.vectorstores import MyScale, MyScaleSettings
-from langchain_cohere import CohereEmbeddings
-config = MyScaleSettings(
-    host='host-name', port=443, username='your-user-name', password='your-passwd'
-)
-index = MyScale(CohereEmbeddings(model="embed-english-light-v3.0"), config)
-"""
-
 from langchain.retrievers import ContextualCompressionRetriever
 from langchain_cohere import CohereEmbeddings
 from langchain_cohere import ChatCohere
 from langchain_cohere import CohereRerank, CohereRagRetriever
-from langchain.text_splitter import CharacterTextSplitter
-from langchain_community.document_loaders import TextLoader
 from langchain_community.vectorstores import Chroma
-from langchain_community.document_loaders import WebBaseLoader
-
-# Define the Cohere LLM
-llm = ChatCohere(
-    cohere_api_key=SecretStr(COHERE_API_KEY), model="command-a-03-2025"
-)
-# Define the Cohere embedding model
-embeddings = CohereEmbeddings(
-    cohere_api_key=SecretStr(COHERE_API_KEY), model="embed-english-light-v3.0"
-)
-# Load text files and split into chunks, you can also use data gathered elsewhere in your application
-"""
-raw_documents = WebBaseLoader(
-    "https://docs.cohere.com/docs/cohere-toolkit"
-).load()
-text_splitter = CharacterTextSplitter(
-    chunk_size=1000, chunk_overlap=0
-)
-documents = text_splitter.split_documents(raw_documents)
-"""
 from langchain.text_splitter import CharacterTextSplitter
+
+# create Cohere LLM
+print("create Cohere LLM' ", end='')
+llm = ChatCohere(
+    cohere_api_key=SecretStr(COHERE_API_KEY),
+    model="command-a-03-2025"
+)
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
+
+# create embedding model
+print("create embedding model' ", end='')
+embeddings = CohereEmbeddings(
+    cohere_api_key=SecretStr(COHERE_API_KEY),
+    model="embed-english-light-v3.0"
+)
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
+
+# Load text files and split into chunks, you can also use data gathered elsewhere in your application
+print("load and split text files' ", end='')
 text_splitter = CharacterTextSplitter(
     chunk_size = 750,
     chunk_overlap = 150,
     separator="\n",
 )
 splits = text_splitter.split_documents(documents)
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # Create a vector store from the documents
+print("create vecor store DB' ", end='')
 db = Chroma.from_documents(splits, embeddings)
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
+
 # Create Cohere's reranker with the vector DB using Cohere's embeddings as the base retriever
+print("create Cohere Rerank' ", end='')
 reranker = CohereRerank(
     cohere_api_key=SecretStr(COHERE_API_KEY), model="rerank-english-v3.0"
 )
@@ -163,20 +154,28 @@ compression_retriever = ContextualCompressionRetriever(
 compressed_docs = compression_retriever.get_relevant_documents(
     QUESTION
 )
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
+"""
 # Print the relevant documents from using the embeddings and reranker
 print(compressed_docs)
+"""
 # Create the cohere rag retriever using the chat model
+print("create Cohere RAG instance' ", end='')
 rag = CohereRagRetriever(llm=llm, connectors=[])
 docs = rag.get_relevant_documents(
     QUESTION,
     documents=compressed_docs,
 )
+print(COLOR_OK + "OK" + COLOR_DEFAULT)
+
 # Print the documents
+"""
 print("Documents:")
 for doc in docs[:-1]:
     print(doc.metadata)
     print("\n\n" + doc.page_content)
     print("\n\n" + "-" * 30 + "\n\n")
+"""
 # Print the final generation
 answer = docs[-1].page_content
 print("")
