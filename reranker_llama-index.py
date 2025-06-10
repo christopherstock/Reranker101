@@ -52,7 +52,7 @@ search_index = VectorStoreIndex.from_documents(documents=documents)
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # specify question
-QUESTION = "What did Sam Altman do in this essay?"
+QUESTION = "Which emotions does the heart chakra relate to?"
 
 # -------------------------------------------------------------
 

@@ -1,4 +1,6 @@
 # acclaim
+from llama_index.core.node_parser import SentenceSplitter
+
 print("invoke start.py ", end='')
 COLOR_OK = '\033[92m' # light green
 COLOR_DEFAULT = '\033[0m'
@@ -46,24 +48,6 @@ from langchain_openai import OpenAI
 llm = OpenAI()
 print("Answer: " + llm.invoke("Hello how are you?"))
 
-"""
-# read text file
-print("text File read ", end='')
-with open("./data/paul_graham_essay.txt") as f:
-    text_file = f.read()
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
-
-# split text into chunks
-print("split text file ", end='')
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=20)
-chunks = text_splitter.split_documents(text_file)
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
-print("split to [" + str(len(chunks)) + "] chunks ", end='')
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
-"""
-
 # load documents
 docRoot ="./data/"
 print("load documents [" + docRoot + "] ", end='')
@@ -74,13 +58,14 @@ print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # split documents using recursive character text splitter
 print("split documents ", end='')
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-text_splitter = RecursiveCharacterTextSplitter(
-    chunk_size = 1500,
-    chunk_overlap = 150
+from langchain.text_splitter import CharacterTextSplitter
+text_splitter = CharacterTextSplitter(
+    chunk_size = 750,
+    chunk_overlap = 150,
+    separator="\n\n\n",
 )
 splits = text_splitter.split_documents(documents)
-print(COLOR_OK + "OK" + COLOR_DEFAULT)
+print("(" + str(len(splits)) + " splits) " + COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # create embeddings
 print("create embeddings ", end='')
@@ -101,10 +86,10 @@ print(COLOR_OK + "OK" + COLOR_DEFAULT)
 print("created [" + str(vectordb._collection.count()) + "] vectorDB entries")
 
 # -------------------------------------------------------------
-
 # launch query (no reranker)
+
 print("launch query ", end='')
-QUESTION = "What did Sam Altman do in this essay?"
+QUESTION = "Which emotions does the heart chakra relate to?"
 docs = vectordb.similarity_search(QUESTION, k=10)
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 # Check the number of results
@@ -118,8 +103,8 @@ print(docs[0].page_content)
 print()
 
 # -------------------------------------------------------------
-
 # use LangChain Lib 'RAGatouille' + ColBERT 2.0 Reranker
+
 print("import Lib 'RAGatouille' ", end='')
 from ragatouille import RAGPretrainedModel
 RAG = RAGPretrainedModel.from_pretrained("colbert-ir/colbertv2.0")
@@ -127,13 +112,21 @@ print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
 # create RAG index from document
 print("create 'RAGatouille' RAG index ", end='')
-with open("./data/paul_graham_essay.txt","r") as file:
+with open("./data/chakras.txt","r") as file:
     content = file.read()
+
+"""
+print(">> Content:")
+print("")
+print(content)
+"""
+
 RAG.index(
     collection=[content],
     index_name="rag-with-reranker",
     max_document_length=180,
     split_documents=True,
+    # document_splitter_fn=(SentenceSplitter.from_defaults().split_text),
 )
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 
