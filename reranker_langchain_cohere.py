@@ -60,7 +60,7 @@ from langchain.text_splitter import CharacterTextSplitter
 text_splitter = CharacterTextSplitter(
     chunk_size = 750,
     chunk_overlap = 150,
-    separator="\n\n\n",
+    # separator="\n\n\n",
 )
 splits = text_splitter.split_documents(documents)
 print("(" + str(len(splits)) + " splits) " + COLOR_OK + "OK" + COLOR_DEFAULT)
