@@ -1,2 +1,5 @@
 [OpenAI]
 OPEN_AI_KEY: sk-your-open-ai-key
+
+[CohereAPI]
+COHERE_API_KEY: your-cohere-api-key
