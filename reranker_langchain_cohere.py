@@ -87,7 +87,9 @@ print("created [" + str(vectordb._collection.count()) + "] vectorDB entries")
 # launch query (no reranker)
 
 print("launch query ", end='')
-QUESTION = "What did Sam Altman do?"
+QUESTION_1 = "Which emotions does the heart chakra relate to?"
+QUESTION_2 = "What did Sam Altman do?"
+QUESTION = QUESTION_1
 docs = vectordb.similarity_search(QUESTION, k=10)
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 # Check the number of results
