@@ -87,7 +87,7 @@ print("created [" + str(vectordb._collection.count()) + "] vectorDB entries")
 # launch query (no reranker)
 
 print("launch query ", end='')
-QUESTION = "Which emotions does the heart chakra relate to?"
+QUESTION = "What did Sam Altman do?"
 docs = vectordb.similarity_search(QUESTION, k=10)
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 # Check the number of results
@@ -148,8 +148,6 @@ text_splitter = CharacterTextSplitter(
     separator="\n\n\n",
 )
 splits = text_splitter.split_documents(documents)
-
-
 
 # Create a vector store from the documents
 db = Chroma.from_documents(splits, embeddings)
