@@ -123,7 +123,6 @@ from langchain_community.document_loaders import TextLoader
 from langchain_community.vectorstores import Chroma
 from langchain_community.document_loaders import WebBaseLoader
 
-user_query = "what is Cohere Toolkit?"
 # Define the Cohere LLM
 llm = ChatCohere(
     cohere_api_key=SecretStr(COHERE_API_KEY), model="command-a-03-2025"
@@ -133,6 +132,7 @@ embeddings = CohereEmbeddings(
     cohere_api_key=SecretStr(COHERE_API_KEY), model="embed-english-light-v3.0"
 )
 # Load text files and split into chunks, you can also use data gathered elsewhere in your application
+"""
 raw_documents = WebBaseLoader(
     "https://docs.cohere.com/docs/cohere-toolkit"
 ).load()
@@ -140,8 +140,19 @@ text_splitter = CharacterTextSplitter(
     chunk_size=1000, chunk_overlap=0
 )
 documents = text_splitter.split_documents(raw_documents)
+"""
+from langchain.text_splitter import CharacterTextSplitter
+text_splitter = CharacterTextSplitter(
+    chunk_size = 750,
+    chunk_overlap = 150,
+    separator="\n\n\n",
+)
+splits = text_splitter.split_documents(documents)
+
+
+
 # Create a vector store from the documents
-db = Chroma.from_documents(documents, embeddings)
+db = Chroma.from_documents(splits, embeddings)
 # Create Cohere's reranker with the vector DB using Cohere's embeddings as the base retriever
 reranker = CohereRerank(
     cohere_api_key=SecretStr(COHERE_API_KEY), model="rerank-english-v3.0"
@@ -150,14 +161,14 @@ compression_retriever = ContextualCompressionRetriever(
     base_compressor=reranker, base_retriever=db.as_retriever()
 )
 compressed_docs = compression_retriever.get_relevant_documents(
-    user_query
+    QUESTION
 )
 # Print the relevant documents from using the embeddings and reranker
 print(compressed_docs)
 # Create the cohere rag retriever using the chat model
 rag = CohereRagRetriever(llm=llm, connectors=[])
 docs = rag.get_relevant_documents(
-    user_query,
+    QUESTION,
     documents=compressed_docs,
 )
 # Print the documents
