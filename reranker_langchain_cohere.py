@@ -89,7 +89,7 @@ print("created [" + str(vectordb._collection.count()) + "] vectorDB entries")
 print("launch query ", end='')
 QUESTION_1 = "Which emotions does the heart chakra relate to?"
 QUESTION_2 = "What did Sam Altman do?"
-QUESTION = QUESTION_1
+QUESTION = QUESTION_2
 docs = vectordb.similarity_search(QUESTION, k=10)
 print(COLOR_OK + "OK" + COLOR_DEFAULT)
 # Check the number of results
@@ -147,7 +147,7 @@ from langchain.text_splitter import CharacterTextSplitter
 text_splitter = CharacterTextSplitter(
     chunk_size = 750,
     chunk_overlap = 150,
-    separator="\n\n\n",
+    separator="\n",
 )
 splits = text_splitter.split_documents(documents)
 
